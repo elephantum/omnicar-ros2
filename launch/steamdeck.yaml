@@ -1,0 +1,33 @@
+launch:
+
+- node:
+    pkg: joy
+    exec: joy_node
+    param:
+      - name: deadzone
+        value: 0.1
+
+- node:
+    pkg: teleop_twist_joy
+    exec: teleop_node
+    param:
+      - name: require_enable_button
+        value: false
+
+      - name: axis_linear.x
+        # value: 1
+        value: 4
+      - name: scale_linear.x
+        value: 0.5
+      - name: axis_linear.y
+        value: 3
+      - name: scale_linear.y
+        value: 0.5
+      - name: axis_angular.yaw
+        value: 0
+      - name: scale_angular.yaw
+        value: 0.5
+
+
+- include:
+    file: "$(find-pkg-share foxglove_bridge)/launch/foxglove_bridge_launch.xml"
