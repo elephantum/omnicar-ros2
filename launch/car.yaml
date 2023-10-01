@@ -1,0 +1,14 @@
+launch:
+
+- node:
+    pkg: buildhat_node
+    exec: buildhat_node
+
+- node:
+    pkg: camera_ros
+    exec: camera_node
+    param:
+        - name: width
+          value: 480
+        - name: height
+          value: 320
