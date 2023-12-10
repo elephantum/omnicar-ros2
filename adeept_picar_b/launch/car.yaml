@@ -1,0 +1,13 @@
+launch:
+
+- node:
+    pkg: camera_ros
+    exec: camera_node
+    param:
+        - name: width
+          value: 480
+        - name: height
+          value: 320
+
+- include:
+    file: "$(find-pkg-share foxglove_bridge)/launch/foxglove_bridge_launch.xml"
