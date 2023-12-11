@@ -9,5 +9,9 @@ launch:
         - name: height
           value: 320
 
-- include:
-    file: "$(find-pkg-share foxglove_bridge)/launch/foxglove_bridge_launch.xml"
+- node:
+    pkg: adeept_control
+    exec: adeept_control_node
+
+# - include:
+    # file: "$(find-pkg-share foxglove_bridge)/launch/foxglove_bridge_launch.xml"
