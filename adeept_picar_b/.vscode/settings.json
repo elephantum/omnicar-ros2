@@ -1,10 +1,12 @@
 {
     "ros.distro": "humble",
     "python.autoComplete.extraPaths": [
+        "/home/pi/rpicar-ros2/adeept_picar_b/install/adeept_control/lib/python3.10/site-packages",
         "/opt/ros/humble/lib/python3.10/site-packages",
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
     ],
     "python.analysis.extraPaths": [
+        "/home/pi/rpicar-ros2/adeept_picar_b/install/adeept_control/lib/python3.10/site-packages",
         "/opt/ros/humble/lib/python3.10/site-packages",
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
     ]
