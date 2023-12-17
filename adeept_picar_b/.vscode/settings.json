@@ -9,5 +9,16 @@
         "/home/pi/rpicar-ros2/adeept_picar_b/install/adeept_control/lib/python3.10/site-packages",
         "/opt/ros/humble/lib/python3.10/site-packages",
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
-    ]
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        },
+    },
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
 }

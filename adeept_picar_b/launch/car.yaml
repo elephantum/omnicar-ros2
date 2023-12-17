@@ -4,14 +4,18 @@ launch:
     pkg: camera_ros
     exec: camera_node
     param:
-        - name: width
-          value: 480
-        - name: height
-          value: 320
+      - name: width
+        value: 640
+      - name: height
+        value: 480
 
 - node:
     pkg: adeept_control
     exec: adeept_control_node
 
-# - include:
-    # file: "$(find-pkg-share foxglove_bridge)/launch/foxglove_bridge_launch.xml"
+# - node:
+#     pkg: image_webrtc
+#     exec: image_webrtc_node
+
+- include:
+    file: "$(find-pkg-share foxglove_bridge)/launch/foxglove_bridge_launch.xml"
