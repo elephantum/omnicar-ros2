@@ -1,3 +1,4 @@
 aiohttp
-aiortc
+./aiortc -e
 pydantic
+opencv-stubs

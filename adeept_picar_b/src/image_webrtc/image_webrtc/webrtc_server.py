@@ -8,7 +8,8 @@ import ssl
 
 from aiohttp import web
 from aiortc import RTCPeerConnection, RTCSessionDescription
-from aiortc.contrib.media import MediaPlayer, MediaRelay
+from aiortc.contrib.media import MediaPlayer, MediaRelay, PlayerStreamTrack
+from aiortc.mediastreams import MediaStreamTrack
 from aiortc.rtcrtpsender import RTCRtpSender
 from pydantic import BaseModel
 
@@ -19,18 +20,30 @@ webcam = None
 
 
 class WebRTCConfig(BaseModel):
-    pass
+    host: str
+    port: int
+    play_from: str = None
+    play_without_decoding: bool = True
+    audio_codec: str | None = None
+    video_codec: str | None = None  # video/H264
 
 
-def main(args: WebRTCConfig, ssl_context=None) -> None:
+def make_server(
+    args: WebRTCConfig,
+    ssl_context=None,
+    input_video: MediaStreamTrack = None,
+) -> web.AppRunner:
     def create_local_tracks(play_from, decode):
         global relay, webcam
 
-        if play_from:
+        if input_video:
+            relay = MediaRelay()
+            return None, relay.subscribe(input_video)
+        elif play_from:
             player = MediaPlayer(play_from, decode=decode)
             return player.audio, player.video
         else:
-            options = {"framerate": "30", "video_size": "640x480"}
+            options = {"framerate": "15", "video_size": "640x480"}
             if relay is None:
                 if platform.system() == "Darwin":
                     webcam = MediaPlayer(
@@ -63,6 +76,9 @@ def main(args: WebRTCConfig, ssl_context=None) -> None:
 
     async def offer(request):
         params = await request.json()
+
+        print(params)
+
         offer = RTCSessionDescription(sdp=params["sdp"], type=params["type"])
 
         pc = RTCPeerConnection()
@@ -106,7 +122,7 @@ def main(args: WebRTCConfig, ssl_context=None) -> None:
             ),
         )
 
-    pcs = set()
+    pcs: set[RTCPeerConnection] = set()
 
     async def on_shutdown(app):
         # close peer connections
@@ -119,7 +135,18 @@ def main(args: WebRTCConfig, ssl_context=None) -> None:
     app.router.add_get("/", index)
     app.router.add_get("/client.js", javascript)
     app.router.add_post("/offer", offer)
-    web.run_app(app, host=args.host, port=args.port, ssl_context=ssl_context)
+
+    # web.run_app(app, host=args.host, port=args.port, ssl_context=ssl_context)
+    return web.AppRunner(app)
+
+
+def run_server(runner: web.AppRunner) -> None:
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(runner.setup())
+    site = web.TCPSite(runner, "0.0.0.0", 8080)
+    loop.run_until_complete(site.start())
+    loop.run_forever()
 
 
 if __name__ == "__main__":
@@ -156,10 +183,18 @@ if __name__ == "__main__":
     else:
         logging.basicConfig(level=logging.INFO)
 
+    ssl_context: ssl.SSLContext | None
     if args.cert_file:
         ssl_context = ssl.SSLContext()
         ssl_context.load_cert_chain(args.cert_file, args.key_file)
     else:
         ssl_context = None
 
-    main(args, ssl_context)
+    main(
+        WebRTCConfig(
+            host=args.host,
+            port=args.port,
+            play_from=args.play_from,
+        ),
+        ssl_context,
+    )

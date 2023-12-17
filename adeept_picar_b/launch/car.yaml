@@ -4,10 +4,17 @@ launch:
     pkg: camera_ros
     exec: camera_node
     param:
+      - name: format
+        value: RGB888
+      # width should be divisible by 64 for hw encoding
+      # - name: width
+      #   value: 640
+      # - name: height
+      #   value: 480
       - name: width
-        value: 640
+        value: 768
       - name: height
-        value: 480
+        value: 576
 
 - node:
     pkg: adeept_control
